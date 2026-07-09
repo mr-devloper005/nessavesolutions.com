@@ -30,7 +30,7 @@ export function EditableHeroCollage({ images }: { images: string[] }) {
       : 'grid-cols-1 grid-rows-1'
 
   return (
-    <div className={`absolute inset-0 grid ${gridClass}`} aria-hidden="true">
+    <div className={`editable-hero-animated absolute inset-0 grid ${gridClass}`} aria-hidden="true">
       {Array.from({ length: cellCount }).map((_, cell) => {
         const activeIndex = (cell + tick) % pool.length
         return (

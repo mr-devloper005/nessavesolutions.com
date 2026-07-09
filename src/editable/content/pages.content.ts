@@ -3,19 +3,19 @@ import { slot4BrandConfig } from '@/editable/theme/brand.config'
 export const pagesContent = {
   home: {
     metadata: {
-      title: 'Stories, visuals, and discoverable content',
-      description: 'Explore articles, images, listings, and curated posts through a cleaner reading-first experience.',
-      openGraphTitle: 'Stories, visuals, and discoverable content',
-      openGraphDescription: 'Discover articles, visual posts, and connected content through a calmer reading-first experience.',
-      keywords: ['story platform', 'article site', 'visual content', 'content discovery'],
+      title: 'Useful ideas and practical insight',
+      description: 'Explore useful articles and professional profiles for readers, students, researchers, creators, businesses, and recruiters.',
+      openGraphTitle: 'Useful ideas and practical insight',
+      openGraphDescription: 'Discover thoughtful articles, useful references, and professional profiles in one clear reading experience.',
+      keywords: ['articles', 'professional profiles', 'business profiles', 'student resources', 'research notes'],
     },
     hero: {
-      badge: 'Latest stories and visuals',
-      title: ['A thoughtful home for', 'stories, visuals, and discovery.'],
-      description: 'Explore fresh articles, image-led posts, and discoverable content across the platform through a calmer and clearer browsing experience.',
-      primaryCta: { label: 'Read latest stories', href: '/article' },
-      secondaryCta: { label: 'Explore visuals', href: '/image' },
-      searchPlaceholder: 'Search stories, visuals, listings, and more',
+      badge: 'Ideas and resource discovery',
+      title: ['A practical feed for', 'ideas, people, and work.'],
+      description: 'Explore useful ideas, compare perspectives, and discover practical resources in one focused public directory.',
+      primaryCta: { label: 'Explore latest posts', href: '/search' },
+      secondaryCta: { label: 'Explore profiles', href: '/profile' },
+      searchPlaceholder: 'Search articles, profiles, topics, and names',
       focusLabel: 'Focus',
       featureCardBadge: 'latest cover rotation',
       featureCardTitle: 'Latest posts shape the visual identity of the homepage.',
@@ -83,16 +83,16 @@ export const pagesContent = {
 
   search: {
     metadata: {
-      title: 'Search',
-      description: 'Search posts, topics, categories, and content across the site.',
+      title: 'Search articles and profiles',
+      description: 'Search articles, topics, categories, names, and professional profiles across the site.',
     },
     hero: {
       badge: 'Search the archive',
-      title: 'Find stories, listings, visuals, and resources faster.',
-      description: 'Use keywords, categories, and content types to discover posts from every active section of the site.',
-      placeholder: 'Search by keyword, topic, category, or title',
+      title: 'Find articles, profiles, and references faster.',
+      description: 'Use keywords, categories, and content types to discover useful posts and professional pages.',
+      placeholder: 'Search by keyword, topic, name, category, or title',
     },
-    resultsTitle: 'Latest searchable content',
+    resultsTitle: 'Latest searchable articles and profiles',
   },
   create: {
     metadata: {
@@ -106,8 +106,8 @@ export const pagesContent = {
     },
     hero: {
       badge: 'Publishing workspace',
-      title: 'Create content for every active section.',
-      description: 'Choose the content type, add details, and prepare a clean post with images, links, summary, and body content.',
+      title: 'Share something useful with the community.',
+      description: 'Add a clear title, helpful summary, source details, and polished body content for readers.',
     },
     formTitle: 'Content details',
     submitLabel: 'Submit content',

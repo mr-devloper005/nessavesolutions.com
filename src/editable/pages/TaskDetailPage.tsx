@@ -8,6 +8,7 @@ import type { SitePost } from '@/lib/site-connector'
 import { EditableSiteShell } from '@/editable/shell/EditableSiteShell'
 import { EditableArticleComments } from '@/editable/components/EditableArticleComments'
 import { getTaskTheme, taskThemeStyle } from '@/editable/theme/task-themes'
+import { Ads } from '@/lib/ads'
 
 export const revalidate = 3
 
@@ -194,14 +195,16 @@ function ArticleDetail({ post, related, comments }: { post: SitePost; related: S
   const images = getImages(post)
   return (
     <>
-      <article className="mx-auto max-w-4xl px-6 py-14 sm:py-20">
-        <BackLink task="article" />
-        <p className="mt-10 text-xs font-medium uppercase tracking-[0.28em] text-[var(--tk-accent)]">{categoryOf(post, 'Article')}</p>
-        <h1 className="editable-display mt-5 text-balance text-4xl font-semibold leading-[1.06] tracking-[-0.03em] sm:text-5xl lg:text-[3.4rem]">{post.title}</h1>
+      <div className="mx-auto max-w-6xl px-4 py-6">
+        <Ads slot="header" showLabel eager className="mx-auto w-full" />
+      </div>
+      <article className="mx-auto my-4 max-w-4xl rounded-md border border-[var(--editable-border)] bg-white px-6 py-10 sm:px-10 sm:py-14">
+        <p className="text-xs font-bold uppercase text-[var(--tk-accent)]">{categoryOf(post, 'Article')}</p>
+        <h1 className="editable-display mt-4 text-balance text-4xl font-black leading-tight sm:text-5xl">{post.title}</h1>
         <div className="mt-6 text-sm text-[var(--tk-muted)]">
           <span>{SITE_CONFIG.name}</span>
         </div>
-        {images[0] ? <img src={images[0]} alt="" className="mt-10 aspect-[16/9] w-full rounded-[var(--tk-radius)] border border-[var(--tk-line)] object-cover" /> : null}
+        {images[0] ? <img src={images[0]} alt="" className="mt-8 aspect-[16/9] w-full rounded-md border border-[var(--editable-border)] object-cover" /> : null}
         <BodyContent post={post} />
         <EditableArticleComments slug={post.slug} comments={comments} />
       </article>
@@ -391,11 +394,13 @@ function ProfileDetail({ post, related }: { post: SitePost; related: SitePost[] 
   const email = getField(post, ['email'])
   return (
     <>
-      <section className="mx-auto max-w-[var(--editable-container)] px-6 py-14 sm:py-20 lg:px-8">
-        <BackLink task="profile" />
-        <div className="mt-8 grid gap-10 lg:grid-cols-[360px_minmax(0,1fr)]">
+      <div className="mx-auto max-w-6xl px-4 py-6">
+        <Ads slot="in-feed" showLabel eager className="mx-auto w-full" />
+      </div>
+      <section className="mx-auto max-w-[var(--editable-container)] px-4 py-8 sm:px-6 lg:px-6">
+        <div className="grid gap-4 lg:grid-cols-[320px_minmax(0,1fr)]">
           <aside className="lg:sticky lg:top-24 lg:self-start">
-            <div className="rounded-[var(--tk-radius)] border border-[var(--tk-line)] bg-[var(--tk-surface)] p-8 text-center shadow-[0_22px_60px_rgba(15,23,42,0.08)]">
+            <div className="rounded-md border border-[var(--editable-border)] bg-white p-7 text-center">
               <div className="mx-auto flex h-32 w-32 items-center justify-center overflow-hidden rounded-full border border-[var(--tk-line)] bg-[var(--tk-raised)]">
                 {images[0] ? <img src={images[0]} alt="" className="h-full w-full object-cover" /> : <UserRound className="h-14 w-14 text-[var(--tk-muted)]" />}
               </div>
@@ -405,7 +410,7 @@ function ProfileDetail({ post, related }: { post: SitePost; related: SitePost[] 
               <ContactAction website={website} email={email} bare />
             </div>
           </aside>
-          <article className="min-w-0">
+          <article className="min-w-0 rounded-md border border-[var(--editable-border)] bg-white p-6 sm:p-8">
             <Kicker task="profile">Profile</Kicker>
             <BodyContent post={post} />
             <ImageStrip images={images.slice(1)} label="Gallery" />
@@ -540,7 +545,7 @@ function RelatedStrip({ task, related }: { task: TaskKey; related: SitePost[] })
 
 function RelatedCard({ task, post, grid = false }: { task: TaskKey; post: SitePost; grid?: boolean }) {
   const image = getImages(post)[0]
-  // Build the detail URL from the task route (e.g. /listing/<slug>) — the same
+  // Build the detail URL from the task route (e.g. /listing/<slug>) - the same
   // base the archive cards use. buildPostUrl() can fall back to /posts when the
   // task isn't in the enabled taskViews map, which 404s.
   const href = `${getTaskConfig(task)?.route || `/${task}`}/${post.slug}`
@@ -567,4 +572,3 @@ function RelatedCard({ task, post, grid = false }: { task: TaskKey; post: SitePo
     </Link>
   )
 }
-
