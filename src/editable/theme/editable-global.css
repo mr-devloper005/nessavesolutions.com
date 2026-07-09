@@ -97,8 +97,8 @@ body {
 }
 
 ::selection {
-  background: color-mix(in oklab, var(--slot4-accent-fill) 28%, transparent);
-  color: var(--slot4-page-text);
+  background: #ffe86a;
+  color: #111111;
 }
 
 ::-webkit-scrollbar-track {
@@ -120,4 +120,36 @@ body {
 
 .article-content a {
   color: var(--slot4-accent-fill);
+}
+
+@keyframes editable-hero-pan {
+  0% { transform: scale(1) translate3d(0, 0, 0); }
+  50% { transform: scale(1.045) translate3d(-1.2%, -0.6%, 0); }
+  100% { transform: scale(1) translate3d(0, 0, 0); }
+}
+
+@keyframes editable-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.editable-hero-animated img {
+  animation: editable-hero-pan 18s var(--ease-premium) infinite;
+}
+
+.editable-auto-slider {
+  display: flex;
+  width: max-content;
+  animation: editable-marquee 34s linear infinite;
+}
+
+.editable-auto-slider:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .editable-hero-animated img,
+  .editable-auto-slider {
+    animation: none;
+  }
 }

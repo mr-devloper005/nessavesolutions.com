@@ -9,6 +9,7 @@ import { SITE_CONFIG, type TaskKey } from '@/lib/site-config'
 import type { SitePost } from '@/lib/site-connector'
 import { EditableSiteShell } from '@/editable/shell/EditableSiteShell'
 import { pagesContent } from '@/editable/content/pages.content'
+import { Ads } from '@/lib/ads'
 
 export const revalidate = 3
 
@@ -20,8 +21,32 @@ export async function generateMetadata(): Promise<Metadata> {
   })
 }
 
-const stripHtml = (value: string) => value.replace(/<[^>]*>/g, ' ')
-const compactText = (value: unknown) => typeof value === 'string' ? stripHtml(value).replace(/\s+/g, ' ').trim().toLowerCase() : ''
+const stripHtml = (value: string) => value
+  .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, ' ')
+  .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, ' ')
+  .replace(/<[^>]*>/g, ' ')
+
+const decodeCodePoint = (code: number) => Number.isInteger(code) && code >= 0 && code <= 0x10ffff
+  ? String.fromCodePoint(code)
+  : ''
+
+const decodeHtmlEntities = (value: string) => value
+  .replace(/&#(\d+);/g, (_, code: string) => decodeCodePoint(Number(code)))
+  .replace(/&#x([\da-f]+);/gi, (_, code: string) => decodeCodePoint(Number.parseInt(code, 16)))
+  .replace(/&(amp|lt|gt|quot|apos|nbsp);/gi, (entity) => ({
+    '&amp;': '&',
+    '&lt;': '<',
+    '&gt;': '>',
+    '&quot;': '"',
+    '&apos;': "'",
+    '&nbsp;': ' ',
+  })[entity.toLowerCase()] || ' ')
+
+const plainText = (value: unknown) => typeof value === 'string'
+  ? decodeHtmlEntities(stripHtml(value)).replace(/\s+/g, ' ').trim()
+  : ''
+
+const compactText = (value: unknown) => plainText(value).toLowerCase()
 const getContent = (post: SitePost) => post.content && typeof post.content === 'object' ? post.content as Record<string, unknown> : {}
 const getImage = (post: SitePost) => {
   const content = getContent(post)
@@ -30,7 +55,7 @@ const getImage = (post: SitePost) => {
   return media || compactRaw(content.featuredImage) || compactRaw(content.image) || compactRaw(content.thumbnail) || images || ''
 }
 const compactRaw = (value: unknown) => typeof value === 'string' ? value.trim() : ''
-const summaryOf = (post: SitePost) => post.summary || compactRaw(getContent(post).description) || compactRaw(getContent(post).excerpt) || ''
+const summaryOf = (post: SitePost) => plainText(post.summary || getContent(post).description || getContent(post).excerpt)
 
 const matches = (post: SitePost, query: string, category: string, task: string) => {
   const content = getContent(post)
@@ -54,6 +79,7 @@ function SearchResultCard({ post, index }: { post: SitePost; index: number }) {
   const href = `${taskRoute || `/${task || 'article'}`}/${post.slug}`
   const image = getImage(post)
   const summary = summaryOf(post)
+  const title = plainText(post.title) || 'Untitled post'
   const taskLabel = SITE_CONFIG.tasks.find((item) => item.key === task)?.label || 'Post'
   const strong = index % 5 === 0
 
@@ -68,7 +94,7 @@ function SearchResultCard({ post, index }: { post: SitePost; index: number }) {
       ) : null}
       <div className="p-5 sm:p-6">
         {!image ? <span className="rounded-full bg-[var(--editable-page-text,#211713)] px-3 py-1 text-[11px] font-black uppercase tracking-[0.18em] text-white">{taskLabel}</span> : null}
-        <h2 className="mt-4 line-clamp-3 text-2xl font-black leading-[0.95] tracking-[-0.06em] text-[var(--editable-page-text,#211713)]">{post.title}</h2>
+        <h2 className="mt-4 line-clamp-3 text-2xl font-black leading-[0.95] tracking-[-0.06em] text-[var(--editable-page-text,#211713)]">{title}</h2>
         {summary ? <p className="mt-4 line-clamp-3 text-sm font-semibold leading-7 text-[var(--editable-page-text,#211713)]/65">{summary}</p> : null}
         <span className="mt-5 inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.18em] opacity-60 group-hover:opacity-100">Open result <ArrowRight className="h-4 w-4" /></span>
       </div>
@@ -91,6 +117,9 @@ export default async function SearchPage({ searchParams }: { searchParams?: Prom
   return (
     <EditableSiteShell>
       <main className="min-h-screen bg-[var(--editable-page-bg,#fff7ee)] text-[var(--editable-page-text,#2f1d16)]">
+        <div className="mx-auto max-w-6xl px-4 py-6">
+          <Ads slot="header" showLabel eager className="mx-auto w-full" />
+        </div>
         <section className="mx-auto max-w-[var(--editable-container)] px-4 py-10 sm:px-6 lg:px-8 lg:py-16">
           <div className="grid gap-8 rounded-[2.5rem] border border-[var(--editable-border)] bg-white/70 p-6 shadow-[0_30px_90px_rgba(15,23,42,0.08)] backdrop-blur md:grid-cols-[0.8fr_1.2fr] lg:p-10">
             <div>
@@ -121,7 +150,7 @@ export default async function SearchPage({ searchParams }: { searchParams?: Prom
           <div className="mt-10 flex flex-wrap items-end justify-between gap-4">
             <div>
               <p className="text-xs font-black uppercase tracking-[0.24em] opacity-50">{results.length} results</p>
-              <h2 className="mt-2 text-3xl font-black tracking-[-0.06em]">{query ? `Results for “${query}”` : pagesContent.search.resultsTitle}</h2>
+              <h2 className="mt-2 text-3xl font-black tracking-[-0.06em]">{query ? `Results for "${query}"` : pagesContent.search.resultsTitle}</h2>
             </div>
             <Link href="/article" className="inline-flex items-center gap-2 rounded-full border border-[var(--editable-border)] bg-white px-5 py-3 text-sm font-black">Browse latest <ArrowRight className="h-4 w-4" /></Link>
           </div>
@@ -137,6 +166,9 @@ export default async function SearchPage({ searchParams }: { searchParams?: Prom
             </div>
           )}
         </section>
+        <div className="mx-auto max-w-6xl px-4 py-6">
+          <Ads slot="in-feed" showLabel className="mx-auto w-full" />
+        </div>
       </main>
     </EditableSiteShell>
   )
